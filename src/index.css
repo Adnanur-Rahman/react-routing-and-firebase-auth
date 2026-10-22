@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+ a.active{
+  @apply underline bg-amber-300
+}
+header a{
+  @apply mr-5
+}
+nav a{
+  @apply mr-5
+}
+ p small{
+  @apply text-red-600 font-bold
+}
+tr,td,th{
+  @apply border border-black
+}
