@@ -29,7 +29,6 @@ const [signIn, setSignIn]=useState(false)
 const email=e.target.email.value;
 const password=e.target.password.value;
     console.log(email, password);
-    setError('');
     const lowercaseRegex = /[a-z]/;
 const uppercaseRegex = /[A-Z]/;
 const specialRegex = /[^A-Za-z0-9]/;
@@ -143,8 +142,31 @@ sendPasswordResetEmail(auth, email)
             name="email"
           />
         </div>
+        
+<div className="">
+  <label className="inline-block w-24">
+    Password
+  </label>
 
-        <div className="relative flex items-center">
+  <div className="relative inline-block">
+    <input
+      className="border"
+      type={showPassword ? "text" : "password"}
+      name="password"
+    />
+
+    <button
+      type="button"
+      onClick={handleEye}
+      className="absolute right-0 top-0 h-full flex items-center justify-center px-2 "
+    >
+      {showPassword ? <FaEyeSlash /> : <FaEye />}
+    </button>
+  </div>
+</div>
+
+
+        {/* <div className="relative flex items-center">
           <label className="inline-block w-24">
             Password
           </label>
@@ -154,8 +176,8 @@ sendPasswordResetEmail(auth, email)
             type={showPassword?"text" : "password"}
             name="password"
           />
-          <button onClick={handleEye} className=" absolute right-110 fixed  ">{showPassword? <FaEyeSlash />: <FaEye />}</button>
-        </div>
+          <button onClick={handleEye} className=" absolute right-96 z-10 ">{showPassword? <FaEyeSlash />: <FaEye />}</button>
+        </div> */}
 
         <input
           className="border px-2 cursor-pointer mt-5 mr-5 hover:bg-amber-300"
