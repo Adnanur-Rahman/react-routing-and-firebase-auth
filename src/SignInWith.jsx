@@ -1,24 +1,33 @@
 
 import {
-  createUserWithEmailAndPassword,
-  GithubAuthProvider,
-  GoogleAuthProvider,
+  // createUserWithEmailAndPassword,
+  // GithubAuthProvider,
+  // GoogleAuthProvider,
   sendEmailVerification,
   sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
+  // signInWithEmailAndPassword,
+  // signInWithPopup,
+  // signOut,
 } from "firebase/auth";
 
-import React, { useRef, useState } from "react";
+import React, { use, useRef, useState } from "react";
 import { auth } from "./Firebase.config";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { AuthContext } from "./AuthContext";
+import { useLocation, useNavigate } from "react-router";
 
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
+// const googleProvider = new GoogleAuthProvider();
+// const githubProvider = new GithubAuthProvider();
 
 const SignInWith = () => {
-    const [user, setUser]=useState(null);
+  const {  user, createUser, signInUser, signOutUser, signInwithGoogle, signInwithGithub}=use(AuthContext);
+
+  const location=useLocation();
+  const navigate=useNavigate();
+  // console.log(users, createUser, signInUser);
+
+  
+    // const [user, setUser]=useState(null);
     const [error, setError]=useState('');
     const [showPassword, setShowPassword]=useState(false);
 const [signIn, setSignIn]=useState(false)
@@ -28,12 +37,42 @@ const [signIn, setSignIn]=useState(false)
     e.preventDefault();
 const email=e.target.email.value;
 const password=e.target.password.value;
-    console.log(email, password);
+    // console.log(email, password);
     const lowercaseRegex = /[a-z]/;
 const uppercaseRegex = /[A-Z]/;
 const specialRegex = /[^A-Za-z0-9]/;
 setError('');
-if(!lowercaseRegex.test(password)){
+// if(!lowercaseRegex.test(password)){
+//   setError('Password must contain an lowercase letter.')
+//   return;
+// }
+// if(!uppercaseRegex.test(password)){
+//   setError('Password must contain an uppercase letter.')
+//   return;
+// }
+// if(!specialRegex.test(password)){
+//   setError('Password must contain an special letter.')
+//   return;
+// }
+if(signIn)
+{
+  signInUser(email, password)
+.then(result=>{
+  // setUser(result.user);
+  e.target.reset();
+  console.log(result.user);
+  navigate(location.state || "/");
+}).catch(error=>{console.log(error);
+})
+//  signInWithEmailAndPassword(auth, email, password)
+// .then(result=>{
+//   setUser(result.user);
+//   e.target.reset();
+//   console.log(result.user);
+// }).catch(error=>{console.log(error);
+// })
+}else{
+  if(!lowercaseRegex.test(password)){
   setError('Password must contain an lowercase letter.')
   return;
 }
@@ -45,21 +84,13 @@ if(!specialRegex.test(password)){
   setError('Password must contain an special letter.')
   return;
 }
-if(signIn)
-{
- signInWithEmailAndPassword(auth, email, password)
-.then(result=>{
-  setUser(result.user);
-  e.target.reset();
-  console.log(result.user);
-}).catch(error=>{console.log(error);
-})
-}else{
-      createUserWithEmailAndPassword(auth, email, password)
-    .then(result=>{setUser(result.user);
+   createUser(email, password)
+    .then(result=>{
+      // setUser(result.user);
       console.log(result.user);
       
       e.target.reset();
+        navigate(location.state || "/");
       //email verification
       sendEmailVerification(result.user)
       .then(()=>{alert("check your email for verification")})
@@ -68,36 +99,67 @@ if(signIn)
       setError(error.message);
     }
     )
+    //   createUserWithEmailAndPassword(auth, email, password)
+    // .then(result=>{setUser(result.user);
+    //   console.log(result.user);
+      
+    //   e.target.reset();
+    //   //email verification
+    //   sendEmailVerification(result.user)
+    //   .then(()=>{alert("check your email for verification")})
+    // }
+    // ).catch(error=>{console.log(error.message);
+    //   setError(error.message);
+    // }
+    // )
 }
    
 
   };
 
   const handleGoogle = () => {
-    signInWithPopup(auth, googleProvider)
+   signInwithGoogle()
       .then((result) => {
         console.log(result.user);
-         setUser(result.user);
+         navigate(location.state || "/");
+        //  setUser(result.user);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.code, error.message);
       });
+    // signInWithPopup(auth, googleProvider)
+    //   .then((result) => {
+    //     console.log(result.user);
+    //      setUser(result.user);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleGithub = () => {
-    signInWithPopup(auth, githubProvider)
+    signInwithGithub()
       .then((result) => {
         console.log(result.user);
-        setUser(result.user)
+          navigate(location.state || "/");
+        // setUser(result.user)
       })
       .catch((error) => {
         console.log(error);
       });
+    // signInWithPopup(auth, githubProvider)
+    //   .then((result) => {
+    //     console.log(result.user);
+    //     setUser(result.user)
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
   const handleSignOut=()=>{
-signOut(auth)
+signOutUser()
 .then(()=>{
-    setUser(null);
+  
 }).catch(error=>{console.log(error);}
 )
 }
@@ -164,20 +226,6 @@ sendPasswordResetEmail(auth, email)
     </button>
   </div>
 </div>
-
-
-        {/* <div className="relative flex items-center">
-          <label className="inline-block w-24">
-            Password
-          </label>
-
-          <input
-            className="border"
-            type={showPassword?"text" : "password"}
-            name="password"
-          />
-          <button onClick={handleEye} className=" absolute right-96 z-10 ">{showPassword? <FaEyeSlash />: <FaEye />}</button>
-        </div> */}
 
         <input
           className="border px-2 cursor-pointer mt-5 mr-5 hover:bg-amber-300"

@@ -1,11 +1,14 @@
 
+import { use } from 'react';
 import './App.css'
 import { Link, NavLink, Outlet, useNavigation } from 'react-router'
+import { AuthContext } from './AuthContext';
 
 function App() {
     const navigation=useNavigation();
 
   const isLoading=Boolean(navigation.location);  
+  const {user}=use(AuthContext);
   return (
     <>
   <div className='flex flex-col min-h-screen'> 
@@ -17,6 +20,13 @@ function App() {
   <NavLink  to="/post">post</NavLink>
   <NavLink to="/form">Form</NavLink>
   <NavLink to="/signInWith">signUpWith</NavLink>
+  <NavLink to="/dashboard">Dashboard</NavLink>
+ {
+  user && <>
+   <NavLink to="/order">order</NavLink>
+  <NavLink to="/profile">profile</NavLink>
+  </>
+ }
   {/* <NavLink to="/form/form2">Form2</NavLink>
   <NavLink to="/form/form3">Form3</NavLink> */}
 </header>

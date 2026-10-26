@@ -15,6 +15,12 @@ import Form4 from './Form4.jsx'
 import Form5 from './Form5.jsx'
 import Form6 from './Form6.jsx'
 import SignInWith from './SignInWith.jsx'
+import { AuthContext } from './AuthContext.jsx'
+import AuthProvider from './AuthProvider.jsx'
+import Order from './Order.jsx'
+import Profile from './Profile.jsx'
+import PrivateRoute from './PrivateRoute.jsx'
+import Dashboard from './Dashboard.jsx'
 
 const router=createBrowserRouter([
   {
@@ -76,12 +82,26 @@ const router=createBrowserRouter([
 path:"/signInWith",
 Component: SignInWith
       },
+      {
+path:"/order",
+element: <PrivateRoute><Order></Order></PrivateRoute>
+      },
+      {
+path:"/profile",
+element: <PrivateRoute><Profile></Profile></PrivateRoute>
+      },
+      {
+path:"/dashboard",
+element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>
+      },
     ]
   },
 ])
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-   <RouterProvider router={router}></RouterProvider>
+<AuthProvider>
+  <RouterProvider router={router}></RouterProvider>
+</AuthProvider>
   </StrictMode>,
 )
